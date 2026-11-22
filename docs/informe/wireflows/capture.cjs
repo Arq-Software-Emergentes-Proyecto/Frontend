@@ -1,6 +1,6 @@
 const { chromium } = require('playwright')
 const fs=require('fs')
-const D='/tmp/claude-0/-home-user/4cc0f0f0-6a66-56c1-9b8f-6ac16a73be1c/scratchpad/wf/shots'
+const D='/tmp/informe/wf/shots'
 const APP='http://localhost:4173', LP='http://localhost:4174'
 const meta={}
 const MODE=process.argv[2]||'desktop'

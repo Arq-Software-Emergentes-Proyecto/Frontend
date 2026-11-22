@@ -1,7 +1,7 @@
 import sys
 sys.argv=['x']
-exec(open('/tmp/claude-0/-home-user/4cc0f0f0-6a66-56c1-9b8f-6ac16a73be1c/scratchpad/jb/edit_iam.py').read().split('# ---------------- Figura 59')[0])
-src=Image.open('/tmp/claude-0/-home-user/4cc0f0f0-6a66-56c1-9b8f-6ac16a73be1c/scratchpad/figcheck/orig_fig075.png').convert('RGB')
+exec(open('/tmp/informe/jb/edit_iam.py').read().split('# ---------------- Figura 59')[0])
+src=Image.open('/tmp/informe/figcheck/orig_fig075.png').convert('RGB')
 im=src.copy()
 blue=src.crop((159,139,251,236)); orange=src.crop((269,139,361,236))
 purple=Image.open(J+'fig067.png').convert('RGB').crop((651,156,721,228)).resize((92,97),Image.LANCZOS)

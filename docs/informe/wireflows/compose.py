@@ -1,7 +1,7 @@
 import json, math
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-S='/tmp/claude-0/-home-user/4cc0f0f0-6a66-56c1-9b8f-6ac16a73be1c/scratchpad/wf/shots/'
-O='/tmp/claude-0/-home-user/4cc0f0f0-6a66-56c1-9b8f-6ac16a73be1c/scratchpad/wf/out/'
+S='/tmp/informe/wf/shots/'
+O='/tmp/informe/wf/out/'
 import os; os.makedirs(O,exist_ok=True)
 F='/usr/share/fonts/opentype/inter/'
 def font(w,sz): return ImageFont.truetype(F+{'r':'Inter-Regular.otf','m':'Inter-Medium.otf','b':'Inter-SemiBold.otf','x':'Inter-Bold.otf'}[w],sz)

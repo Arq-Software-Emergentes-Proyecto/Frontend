@@ -2,7 +2,7 @@
 """Render puml(s) from v2 dir: SVG to measure, PNG at dpi so width<=2400. Report printed pt."""
 import sys, subprocess, re, os, html
 from PIL import Image
-J=os.environ.get('PLANTUML_JAR','/tmp/claude-0/-home-user/4cc0f0f0-6a66-56c1-9b8f-6ac16a73be1c/scratchpad/diag2/plantuml.jar')
+J=os.environ.get('PLANTUML_JAR','/tmp/informe/diag2/plantuml.jar')
 import os; V=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TMP='/tmp/v2svg'
 os.makedirs(TMP,exist_ok=True)

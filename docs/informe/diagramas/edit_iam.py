@@ -1,9 +1,9 @@
 import sys
-sys.path.insert(0,'/tmp/claude-0/-home-user/4cc0f0f0-6a66-56c1-9b8f-6ac16a73be1c/scratchpad/jb')
+sys.path.insert(0,'/tmp/informe/jb')
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
-J='/tmp/claude-0/-home-user/4cc0f0f0-6a66-56c1-9b8f-6ac16a73be1c/scratchpad/jb/'
-FONT='/tmp/claude-0/-home-user/4cc0f0f0-6a66-56c1-9b8f-6ac16a73be1c/scratchpad/fonts/OpenSans.ttf'
+J='/tmp/informe/jb/'
+FONT='/tmp/informe/fonts/OpenSans.ttf'
 _fc={}
 def font(sz,w=400):
     k=(sz,w)

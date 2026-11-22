@@ -1,6 +1,6 @@
 # Capítulo 6: imágenes de reemplazo (Figuras 132–152)
 
-Las imágenes salen de builds de producción propios (`vite build`) de la app (`/home/user/Fronted`, rama `claude/compassionate-fermi-03ljdt`) y de la landing (`/home/user/landingpage`). Se capturaron con Playwright/Chromium, en español (`es-PE`) y en el modo demo de la app (usuario `test`, contraseña `123456`).
+Las imágenes salen de builds de producción propios (`vite build`) de la app (`/home/user/Fronted`) y de la landing (`/home/user/landingpage`). Se capturaron con Playwright/Chromium, en español (`es-PE`) y en el modo demo de la app (usuario `test`, contraseña `123456`).
 
 **Aviso:** el build de la app usó el árbol de trabajo tal como estaba, con cambios sin commit hechos por otras tareas (`es.json`, `en.json`, `seed.js`, `AppDashboardView.vue`, `AppAdminResidentHelpView.vue`). No modifiqué ningún archivo fuente.
 
