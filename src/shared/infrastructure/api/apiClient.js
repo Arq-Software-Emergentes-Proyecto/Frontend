@@ -29,6 +29,10 @@ export const apiClient = axios.create({
 // request, so signing out of the demo goes straight back to the real API).
 const networkAdapter = axios.getAdapter(apiClient.defaults.adapter)
 apiClient.defaults.adapter = async (config) => {
+  // Registro e inicio de sesión mandan el token real del usuario nuevo: van a la API aunque en el
+  // navegador quede guardada una sesión demo (si no, el alta caía en el mock y fallaba).
+  const explicitToken = String(config.headers?.Authorization ?? '').replace(/^Bearer\s+/i, '')
+  if (explicitToken && !isPreviewAccessToken(explicitToken)) return networkAdapter(config)
   if (!isDemoSession()) return networkAdapter(config)
   const { localMockAdapter } = await import('@/shared/infrastructure/mock/mockAdapter.js')
   return localMockAdapter(config)
