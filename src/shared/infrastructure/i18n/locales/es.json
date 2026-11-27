@@ -1382,6 +1382,8 @@
     "summaryAria": "Resumen del equipo",
     "kpiActive": "Trabajadores activos",
     "kpiActiveHint": "de {n} en total",
+    "kpiActiveShort": "Activos",
+    "kpiShiftsTodayShort": "Turnos hoy",
     "kpiOpen": "Tareas abiertas",
     "kpiOpenHint": "Ninguna por iniciar | {n} por iniciar | {n} por iniciar",
     "kpiInProgress": "En progreso",
