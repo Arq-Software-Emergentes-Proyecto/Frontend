@@ -1044,6 +1044,29 @@ onMounted(loadList)
             </div>
           </div>
 
+          <!-- Heuristic #2: tell admins what to upload here and how the assistant uses it -->
+          <details
+            v-if="isContextFolder(selectedFolder)"
+            class="imp-guide"
+            :open="!visibleItems.length"
+          >
+            <summary class="imp-guide__summary">
+              <i class="pi pi-info-circle" aria-hidden="true" />
+              {{ t('importView.contextGuideTitle') }}
+            </summary>
+            <div class="imp-guide__body">
+              <p class="imp-guide__lead">{{ t('importView.contextGuideWhat') }}</p>
+              <ul class="imp-guide__list">
+                <li>{{ t('importView.contextGuideRegulation') }}</li>
+                <li>{{ t('importView.contextGuideMinutes') }}</li>
+                <li>{{ t('importView.contextGuideSpaces') }}</li>
+                <li>{{ t('importView.contextGuideNotices') }}</li>
+              </ul>
+              <p class="imp-guide__lead">{{ t('importView.contextGuideHow') }}</p>
+              <p class="imp-guide__note">{{ t('importView.contextGuideVersions') }}</p>
+            </div>
+          </details>
+
           <div v-if="visibleItems.length" class="imp-toolbar">
             <label class="imp-search">
               <i class="pi pi-search" aria-hidden="true" />
@@ -1958,6 +1981,45 @@ onMounted(loadList)
   margin: 0.2rem 0 0;
   font-size: 0.78rem;
   line-height: 1.4;
+  color: #6e6e73;
+}
+
+.imp-guide {
+  margin-bottom: 0.9rem;
+  border: 1px solid #cfe8d6;
+  border-radius: 12px;
+  background: #f3faf5;
+}
+
+.imp-guide__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #166534;
+  cursor: pointer;
+}
+
+.imp-guide__body {
+  padding: 0 0.85rem 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #3a3a3c;
+}
+
+.imp-guide__lead {
+  margin: 0 0 0.35rem;
+}
+
+.imp-guide__list {
+  margin: 0 0 0.6rem;
+  padding-left: 1.1rem;
+}
+
+.imp-guide__note {
+  margin: 0;
   color: #6e6e73;
 }
 
