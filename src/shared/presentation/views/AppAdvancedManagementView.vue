@@ -1,5 +1,5 @@
 <script setup>
-import { publicWebOrigin } from '@/shared/infrastructure/envConfig.js'
+import { publicShareOrigin } from '@/shared/infrastructure/envConfig.js'
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
@@ -169,7 +169,7 @@ function generateResidentAccessLink(resident) {
     delete accessLinks[resident.id]
     return
   }
-  const baseUrl = publicWebOrigin()
+  const baseUrl = publicShareOrigin()
   const params = new URLSearchParams({
     invite: '1',
     token: resident.inviteToken || '',

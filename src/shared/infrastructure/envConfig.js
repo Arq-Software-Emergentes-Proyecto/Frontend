@@ -58,3 +58,25 @@ export function publicWebOrigin() {
   if (configured) return configured
   return typeof window !== 'undefined' ? window.location.origin : ''
 }
+
+/** Public web app, used when a shared link would otherwise point at a local origin. */
+export const PUBLIC_WEB_APP_URL = 'https://fronted-seven-opal.vercel.app'
+
+/** True for origins only reachable on this machine (localhost, 127.0.0.1, capacitor://localhost). */
+export function isLocalOrigin(origin) {
+  try {
+    const host = new URL(String(origin ?? '')).hostname
+    return host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0' || host === '[::1]'
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Origin for links another person opens on their own phone (guest passes, resident invites).
+ * Never local: a guest cannot open a localhost link, so those fall back to the public web app.
+ */
+export function publicShareOrigin() {
+  const origin = publicWebOrigin()
+  return !origin || isLocalOrigin(origin) ? PUBLIC_WEB_APP_URL : origin
+}
