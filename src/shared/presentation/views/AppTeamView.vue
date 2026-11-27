@@ -9,6 +9,7 @@ import InputNumber from 'primevue/inputnumber'
 import { teamWorkersApi, STAFF_POSITIONS } from '@/team/infrastructure/teamWorkersApi.js'
 import ConfirmActions from '@/shared/presentation/components/ConfirmActions.vue'
 import LoadErrorRetry from '@/shared/presentation/components/LoadErrorRetry.vue'
+import KpiPills from '@/shared/presentation/components/KpiPills.vue'
 import TeamTasksPanel from '@/team/presentation/components/TeamTasksPanel.vue'
 import TeamShiftsPanel from '@/team/presentation/components/TeamShiftsPanel.vue'
 import { initialsOf, localeTag, positionTone } from '@/team/presentation/teamUi.js'
@@ -308,6 +309,53 @@ const openTasksTotal = computed(() =>
     : workers.value.reduce((sum, w) => sum + (Number(w.openTasks) || 0), 0),
 )
 
+/** Summary pills in the header row, same style as Incidents and Documents. */
+const kpiPills = computed(() => {
+  const workersPending = loading.value && !workers.value.length
+  return [
+    {
+      key: 'active',
+      tone: 'blue',
+      icon: 'pi-users',
+      label: t('teamMgmt.kpiActive'),
+      short: t('teamMgmt.kpiActiveShort'),
+      value: workersPending ? '…' : activeWorkers.value.length,
+      hint: t('teamMgmt.kpiActiveHint', { n: workers.value.length }),
+    },
+    {
+      key: 'open',
+      tone: 'amber',
+      icon: 'pi-inbox',
+      label: t('teamMgmt.kpiOpen'),
+      value: openTasksTotal.value,
+      hint: tasksSummary.value
+        ? t('teamMgmt.kpiOpenHint', { n: tasksSummary.value.pending }, tasksSummary.value.pending)
+        : undefined,
+    },
+    {
+      key: 'inProgress',
+      tone: 'orange',
+      icon: 'pi-wrench',
+      label: t('teamMgmt.kpiInProgress'),
+      value: tasksSummary.value ? tasksSummary.value.inProgress : '…',
+      hint: tasksSummary.value
+        ? t('teamMgmt.kpiInProgressHint', { n: tasksSummary.value.completed }, tasksSummary.value.completed)
+        : undefined,
+    },
+    {
+      key: 'shiftsToday',
+      tone: 'green',
+      icon: 'pi-calendar',
+      label: t('teamMgmt.kpiShiftsToday'),
+      short: t('teamMgmt.kpiShiftsTodayShort'),
+      value: shiftsSummary.value ? shiftsSummary.value.today : '…',
+      hint: shiftsSummary.value
+        ? t('teamMgmt.kpiShiftsHint', { n: shiftsSummary.value.upcoming }, shiftsSummary.value.upcoming)
+        : undefined,
+    },
+  ]
+})
+
 const TAB_KEYS = ['workers', 'tasks', 'shifts']
 const activeTab = ref('workers')
 const tabs = computed(() => [
@@ -370,6 +418,13 @@ onMounted(loadWorkers)
   <div class="app-view tm">
     <header class="tm-head">
       <h1 class="bf-sr-only">{{ t('app.team') }}</h1>
+      <KpiPills
+        v-if="!listLoadFailed"
+        inline
+        :items="kpiPills"
+        :aria-label="t('teamMgmt.summaryAria')"
+        :busy="loading"
+      />
       <div class="tm-head__actions" role="group" :aria-label="t('teamMgmt.headerActions')">
         <button
           type="button"
@@ -405,59 +460,6 @@ onMounted(loadWorkers)
     </p>
 
     <template v-if="!listLoadFailed">
-      <section class="tm-kpis" :aria-label="t('teamMgmt.summaryAria')">
-        <article class="tm-kpi tm-kpi--blue">
-          <div class="tm-kpi__head">
-            <p class="tm-kpi__label">{{ t('teamMgmt.kpiActive') }}</p>
-            <span class="tm-kpi__icon tm-kpi__icon--blue"><i class="pi pi-users" aria-hidden="true" /></span>
-          </div>
-          <p class="tm-kpi__value">{{ loading && !workers.length ? '…' : activeWorkers.length }}</p>
-          <p class="tm-kpi__hint">{{ t('teamMgmt.kpiActiveHint', { n: workers.length }) }}</p>
-        </article>
-        <article class="tm-kpi tm-kpi--amber">
-          <div class="tm-kpi__head">
-            <p class="tm-kpi__label">{{ t('teamMgmt.kpiOpen') }}</p>
-            <span class="tm-kpi__icon tm-kpi__icon--amber"><i class="pi pi-inbox" aria-hidden="true" /></span>
-          </div>
-          <p class="tm-kpi__value">{{ openTasksTotal }}</p>
-          <p class="tm-kpi__hint">
-            {{
-              tasksSummary
-                ? t('teamMgmt.kpiOpenHint', { n: tasksSummary.pending }, tasksSummary.pending)
-                : '…'
-            }}
-          </p>
-        </article>
-        <article class="tm-kpi tm-kpi--orange">
-          <div class="tm-kpi__head">
-            <p class="tm-kpi__label">{{ t('teamMgmt.kpiInProgress') }}</p>
-            <span class="tm-kpi__icon tm-kpi__icon--orange"><i class="pi pi-wrench" aria-hidden="true" /></span>
-          </div>
-          <p class="tm-kpi__value">{{ tasksSummary ? tasksSummary.inProgress : '…' }}</p>
-          <p class="tm-kpi__hint">
-            {{
-              tasksSummary
-                ? t('teamMgmt.kpiInProgressHint', { n: tasksSummary.completed }, tasksSummary.completed)
-                : '…'
-            }}
-          </p>
-        </article>
-        <article class="tm-kpi tm-kpi--green">
-          <div class="tm-kpi__head">
-            <p class="tm-kpi__label">{{ t('teamMgmt.kpiShiftsToday') }}</p>
-            <span class="tm-kpi__icon tm-kpi__icon--green"><i class="pi pi-calendar" aria-hidden="true" /></span>
-          </div>
-          <p class="tm-kpi__value">{{ shiftsSummary ? shiftsSummary.today : '…' }}</p>
-          <p class="tm-kpi__hint">
-            {{
-              shiftsSummary
-                ? t('teamMgmt.kpiShiftsHint', { n: shiftsSummary.upcoming }, shiftsSummary.upcoming)
-                : '…'
-            }}
-          </p>
-        </article>
-      </section>
-
       <section class="tm-card">
         <div class="tm-tabs" v-bf-seg role="tablist" :aria-label="t('teamMgmt.tabsLabel')">
           <button
@@ -890,7 +892,7 @@ onMounted(loadWorkers)
 /* ---------- Header ---------- */
 .tm-head {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: flex-end;
   gap: 1rem 1.5rem;
   flex-wrap: wrap;
@@ -901,78 +903,6 @@ onMounted(loadWorkers)
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-}
-
-/* ---------- Summary ---------- */
-.tm-kpis {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-.tm-kpi {
-  background: var(--kpi-bg, #f1f5f9);
-  border-radius: 16px;
-  padding: 1rem 1.1rem 1.05rem;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.tm-kpi--blue { --kpi-bg: #e8eefc; }
-.tm-kpi--green { --kpi-bg: #e3f4e8; }
-.tm-kpi--orange { --kpi-bg: #fdeee2; }
-.tm-kpi--amber { --kpi-bg: #fdf3dc; }
-
-.tm-kpi__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.6rem;
-}
-
-.tm-kpi__label {
-  margin: 0;
-  color: #475569;
-  font-weight: 600;
-  font-size: 0.8rem;
-}
-
-.tm-kpi__icon {
-  width: 2.1rem;
-  height: 2.1rem;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 0.92rem;
-  background: #fff;
-}
-
-.tm-kpi__icon--blue { color: #1e3a8a; }
-.tm-kpi__icon--green { color: #15803d; }
-.tm-kpi__icon--orange { color: #c2410c; }
-.tm-kpi__icon--amber { color: #b45309; }
-
-.tm-kpi__value {
-  margin: 0 0 0.4rem;
-  color: #0f172a;
-  font-family: var(--bf-font-heading, inherit);
-  font-weight: 700;
-  font-size: 1.65rem;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-}
-
-.tm-kpi__hint {
-  margin: auto 0 0;
-  color: #6e6e73;
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1.35;
 }
 
 /* ---------- Card + tabs ---------- */
@@ -1181,12 +1111,6 @@ onMounted(loadWorkers)
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1100px) {
-  .tm-kpis {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 720px) {
   .app-view {
     padding: 1rem 1rem 2rem;
@@ -1208,15 +1132,6 @@ onMounted(loadWorkers)
   .tm-head__actions .tm-btn--primary {
     grid-column: 1 / -1;
     order: -1;
-  }
-  .tm-kpis {
-    gap: 0.6rem;
-  }
-  .tm-kpi {
-    padding: 0.85rem 0.9rem 0.9rem;
-  }
-  .tm-kpi__value {
-    font-size: 1.4rem;
   }
   .tm-card {
     padding: 1rem 0.85rem;

@@ -1382,6 +1382,8 @@
     "summaryAria": "Team summary",
     "kpiActive": "Active workers",
     "kpiActiveHint": "of {n} in total",
+    "kpiActiveShort": "Active",
+    "kpiShiftsTodayShort": "Shifts today",
     "kpiOpen": "Open tasks",
     "kpiOpenHint": "None waiting to start | {n} waiting to start | {n} waiting to start",
     "kpiInProgress": "In progress",
