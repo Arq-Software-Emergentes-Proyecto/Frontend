@@ -16,6 +16,7 @@ import { adminManagementExpensesApi } from '@/finances/infrastructure/adminManag
 import { sharedUtilityServicesApi } from '@/finances/infrastructure/sharedUtilityServicesApi.js'
 import { useFinancesStore } from '@/finances/application/financesStore.js'
 import { financesApi } from '@/finances/infrastructure/financesApi.js'
+import { teamWorkersApi } from '@/team/infrastructure/teamWorkersApi.js'
 import { isDemoSession } from '@/iam/application/localPreviewAuth.js'
 import LoadErrorRetry from '@/shared/presentation/components/LoadErrorRetry.vue'
 import { confirmSuccess, isFresh, markFresh } from '@/shared/presentation/feedback/successFeedback.js'
@@ -181,6 +182,7 @@ const serviceForm = reactive({
 })
 
 const fixedForm = reactive({
+  workerId: null,
   name: '',
   dni: '',
   phone: '',
@@ -467,6 +469,7 @@ function closeModal() {
 }
 
 function resetFixedForm() {
+  fixedForm.workerId = null
   fixedForm.name = ''
   fixedForm.dni = ''
   fixedForm.phone = ''
@@ -491,9 +494,40 @@ function closeServiceModal() {
   serviceModalOpen.value = false
 }
 
+/** Active Team workers, so a fixed payout can be filled in from Equipo instead of retyping it. */
+const teamWorkers = ref([])
+
+const teamWorkerOptions = computed(() => {
+  const registeredDnis = new Set(fixedRecipients.value.map((r) => String(r.dni ?? '').trim()))
+  return teamWorkers.value
+    .filter((w) => w.status !== 'INACTIVE' && !registeredDnis.has(String(w.dni ?? '').trim()))
+    .map((w) => ({ label: w.name, value: w.id }))
+})
+
+async function loadTeamWorkers() {
+  try {
+    teamWorkers.value = await teamWorkersApi.list()
+  } catch {
+    // Without Equipo the form still works by typing the data by hand.
+    teamWorkers.value = []
+  }
+}
+
+function applyTeamWorker(id) {
+  const worker = teamWorkers.value.find((w) => w.id === id)
+  if (!worker) return
+  fixedForm.name = worker.name ?? ''
+  fixedForm.dni = worker.dni ?? ''
+  fixedForm.phone = worker.phone ?? ''
+  fixedForm.salary = Number.isFinite(Number(worker.salary)) ? Number(worker.salary) : null
+  fixedForm.photoUrl = worker.photoUrl ?? ''
+  fixedSubmitError.value = ''
+}
+
 function openFixedModal() {
   resetFixedForm()
   fixedModalOpen.value = true
+  loadTeamWorkers()
 }
 
 function closeFixedModal() {
@@ -1412,6 +1446,21 @@ onMounted(async () => {
       :draggable="false"
     >
       <div class="cme-form">
+        <div v-if="teamWorkerOptions.length" class="cme-field">
+          <label for="fixed-pay-worker">{{ t('fixedPay.workerLabel') }}</label>
+          <Select
+            v-model="fixedForm.workerId"
+            input-id="fixed-pay-worker"
+            :options="teamWorkerOptions"
+            option-label="label"
+            option-value="value"
+            :placeholder="t('fixedPay.workerPlaceholder')"
+            show-clear
+            fluid
+            @update:model-value="applyTeamWorker"
+          />
+          <small class="cme-field__hint">{{ t('fixedPay.workerHint') }}</small>
+        </div>
         <div class="cme-field">
           <label for="fixed-pay-name">{{ t('fixedPay.nameLabel') }}</label>
           <InputText id="fixed-pay-name" v-model="fixedForm.name" autocomplete="name" fluid />
@@ -2674,6 +2723,12 @@ onMounted(async () => {
   background: #fde4e4;
   color: #7f1d1d;
   font-size: 0.8rem;
+}
+
+.cme-dialog .cme-field__hint {
+  color: #6e6e73;
+  font-size: 0.75rem;
+  line-height: 1.35;
 }
 
 .cme-dialog .cme-form__note {
